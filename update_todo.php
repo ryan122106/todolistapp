@@ -1,4 +1,10 @@
 <?php
+
+session_start();
+if (!isset($_SESSION["user"])) {
+    header("Location: login.php");
+    exit();
+}
   $host = "127.0.0.1";
   $database_name = "todolistapp";
   $database_user = "root";

@@ -1,4 +1,6 @@
 <?php
+  session_start();
+
   $host = "127.0.0.1";
   $database_name = "todolistapp";
   $database_user = "root";
@@ -45,46 +47,50 @@
       <div class="card-body">
         <h3 class="card-title mb-3">My Todo List</h3>
         <ul class="list-group">
-        <?php foreach ($todos as $index => $todo) { ?>
-          <li
-            class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <div>
+        <?php if( isset($_SESSION["user"]) ) : ?> 
+          <p>Hello,<?= $_SESSION["user"]["name"];?></p>
+        <div>
+          <a href="logout.php">Logout</a>
+        </div>
+        <?php else:?>
+          <div>
+            <a href="login.php">Login</a>
+            <hr>
+            <a href="signup.php">Sign Up</a>
+          </div>
+          <?php endif ;?>
+          <?php if( isset($_SESSION["user"]) ) : ?>
+            <?php foreach ($todos as $index => $todo): ?>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <form method="POST" action="update_todo.php">
+                    <input type="hidden" name="id" value="<?php echo $todo["id"]; ?>" />
+                    <input type="hidden" name="completed" value="<?php echo $todo["completed"]; ?>" />
+                    <?php if ($todo["completed"] === 1): ?>
+                      <button class="btn btn-sm btn-success">
+                        <i class='bi bi-check-square'></i>
+                      </button>
+                      <span class="ms-2 text-decoration-line-through"><?php echo $todo["name"]; ?></span>
+                    <?php else: ?>
+                      <button class="btn btn-sm btn-light">
+                        <i class='bi bi-square'></i>
+                      </button>
+                      <span class="ms-2"><?= $todo["name"]; ?></span>
+                    <?php endif; ?>
+                  </form>
+                </div>
+                <form method="POST" action="delete_todo.php">
+                  <input type='hidden' name="name" value="<?php echo $todo["id"]; ?>" />
+                  <div>
+                    <button class="btn btn-sm btn-danger">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </form>
+              </li>
+            <?php endforeach; ?>
+          <?php endif; ?>
 
-            <form method="POST" action="update_todo.php">
-
-              <input type="hidden" name="id" value="<?php echo $todo["id"]; ?>" />
-              <input type="hidden" name="completed" value="<?php echo $todo["completed"]; ?>" />
-
-                 <?php if ($todo["completed"] === 1){?>
-                   <button class="btn btn-sm btn-success">
-                   <i class ='bi bi-check-square'></i>
-                   </button>
-                   <span class="ms-2 text-decoration-line-through"><?php echo $todo["name"]; ?></span>
-                   </form>
-                 <?php }else{?>
-                  <button class="btn btn-sm btn-light">
-                  <i class ='bi bi-square'></i>
-                   </button>
-                   <span class="ms-2"><?= $todo["name"]; ?></span>
-                   </form>
-                 <?php } ?>
-            </div>
-
-            <form
-             method="POST"
-             action="delete_todo.php"
-             >
-             <input type='hidden' name="name" value="<?php echo $todo["id"]; ?>" />
-            <div>
-              <button class="btn btn-sm btn-danger">
-                <i class="bi bi-trash"></i>
-              </button>
-              </form>
-
-            </div>
-          </li>
-          <?php } ?>
         </ul>
 
 
